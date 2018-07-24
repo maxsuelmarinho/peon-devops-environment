@@ -1,0 +1,17 @@
+---
+- name: install packages
+  yum:
+    name: "{{ packages }}"
+    state: latest
+  vars:
+    packages:
+    - epel-release
+    - wget
+    - unzip
+    - netstat
+    - sshpass
+    - tree
+    - vim
+    - git
+    - jq
+    - httpie

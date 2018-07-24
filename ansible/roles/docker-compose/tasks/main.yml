@@ -3,7 +3,7 @@
   yum:
     name: python-pip
     state: present
-- name: install docker compose
+- name: "install docker compose v{{ docker_compose_version }}"
   pip:
     name: docker-compose
-    version: 1.9.0
+    version: "{{ docker_compose_version }}"

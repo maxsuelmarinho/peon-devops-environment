@@ -4,5 +4,7 @@
   become_method: sudo
   gather_facts: true
   roles:
+    - common
     - docker
     - docker-compose
+    - terraform

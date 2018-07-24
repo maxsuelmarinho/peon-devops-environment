@@ -30,6 +30,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
 
   config.vm.provision "ansible_local" do |ansible|
+      ansible.version = "2.6.1"
       ansible.playbook = "./ansible/playbook.yml"
   end
 end
