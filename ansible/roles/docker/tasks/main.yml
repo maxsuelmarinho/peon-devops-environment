@@ -1,0 +1,19 @@
+- name: ensure docker is at the lastest version
+  yum:
+    name: docker
+    state: latest
+    update_cache: yes
+- name: ensure docker is running
+  service:
+    name: docker
+    state: started
+    enabled: yes
+- name: create a docker group
+  group:
+    name: docker
+    state: present
+- name: add user vagrant to docker group
+  user:
+    name: vagrant
+    groups: docker
+    append: yes
