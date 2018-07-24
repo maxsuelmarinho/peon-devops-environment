@@ -8,8 +8,25 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.ssh.forward_agent = true
   config.vm.network :private_network, ip: "192.168.33.10"
 
-  if Vagrant.has_plugin?("vagrant-vbguest") then
+  config.vm.provider "virtualbox" do |vb|
+    required_plugins = %w(vagrant-vbguest vagrant-disksize)
+    required_plugins.each do |plugin|
+      unless Vagrant.has_plugin? plugin
+        system "vagrant plugin install #{plugin}"
+        _retry=true
+      end
+    end
+
     config.vbguest.auto_update = true
+    config.disksize.size = "40GB"
+
+    vb.name = "peon-devops"
+    vb.linked_clone = true
+    vb.customize ["modifyvm", :id, "--memory", "1024"]
+    vb.customize ["modifyvm", :id, "--cpus", "1"]
+    vb.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
+    vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+    vb.customize ["setextradata", :id, "VBoxInternal2/SharedFoldersEnableSymlinksCreate/v-root", "1"]
   end
 
   config.vm.provision "ansible_local" do |ansible|
