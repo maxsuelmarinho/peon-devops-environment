@@ -1,0 +1,19 @@
+---
+- name: install python-pip
+  yum:
+    name: python-pip
+    state: present
+- name: "install awscli"
+  pip:
+    name: "{{ items }}"
+    state: present
+  vars:
+    items:
+    - awscli
+    - bs4
+    - python-ntlm
+    - python-ntlm3
+    - requests-ntlm
+    - lxml
+    - boto3
+    - boto
