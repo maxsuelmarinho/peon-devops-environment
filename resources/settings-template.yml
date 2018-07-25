@@ -1,3 +1,8 @@
 ---
 ssh_private_keys:
   - ~/.ssh/id_rsa
+
+shared_folders:
+  - src: /home/myuser/projects
+    dst: /home/vagrant/projects
+    type: virtualbox
