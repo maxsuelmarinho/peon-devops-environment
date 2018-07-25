@@ -4,6 +4,7 @@
   become_method: sudo
   gather_facts: true
   roles:
+    - epel-repository
     - common
     - docker
     - docker-compose
