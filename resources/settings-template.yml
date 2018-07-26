@@ -2,6 +2,11 @@
 ssh_private_keys:
   - ~/.ssh/id_rsa
 
+instance_settings:
+    cpus: 2
+    memory: 2048
+    disk_size: "20GB"
+
 shared_folders:
   - src: /home/myuser/projects
     dst: /home/vagrant/projects
