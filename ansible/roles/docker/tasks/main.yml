@@ -3,17 +3,38 @@
     name: docker
     state: latest
     update_cache: yes
+
 - name: ensure docker is running
   service:
     name: docker
     state: started
     enabled: yes
+
 - name: create a docker group
   group:
     name: docker
     state: present
-- name: add user vagrant to docker group
+
+- name: add users to docker group
   user:
-    name: vagrant
-    groups: docker
+    name: "{{ item }}"
+    groups: "{{ docker_group }}"
     append: yes
+  with_items: "{{ docker_users }}"
+
+- name: create docker config directory
+  file:
+    path: /etc/docker
+    state: directory
+    mode: 0600
+    owner: root
+    group: root
+
+- name: configure docker daemon
+  template:
+    src: daemon.json.j2
+    dest: /etc/docker/daemon.json
+    mode: 0400
+    owner: root
+    group: "{{ docker_group }}"
+  notify: restart docker
