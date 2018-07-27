@@ -17,6 +17,14 @@ class Peon
         vb.customize ["modifyvm", :id, "--memory", instanceSettings["memory"] ||= "1024"]
         vb.customize ["modifyvm", :id, "--cpus", instanceSettings["cpus"] ||= "1"]
         config.disksize.size = instanceSettings["disk_size"] ||= "20GB"
+
+        privateNetworkIp = "192.168.33.10"
+        if settings.include? "network"
+            networkSettings = instanceSettings["network"]
+            privateNetworkIp = networkSettings["private_network_ip"]
+        end
+        config.vm.network :private_network, ip: privateNetworkIp
+
       end
 
       vb.name = "peon-devops"

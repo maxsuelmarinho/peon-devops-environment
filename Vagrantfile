@@ -27,8 +27,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box = "centos/7"
   config.vm.box_check_update = true
   config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
-  config.ssh.forward_agent = true
-  config.vm.network :private_network, ip: "192.168.33.10"  
+  config.ssh.forward_agent = true  
 
   config.vm.provision "shell" do |s|
     s.name = "Install Ansible"

@@ -6,6 +6,8 @@ instance_settings:
     cpus: 2
     memory: 2048
     disk_size: "20GB"
+    network:
+      private_network_ip: "192.168.33.10"
 
 shared_folders:
   - src: /home/myuser/projects
