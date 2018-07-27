@@ -10,3 +10,4 @@
     - docker-compose
     - terraform
     - awscli
+    - gradle

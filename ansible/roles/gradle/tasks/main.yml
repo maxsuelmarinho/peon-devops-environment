@@ -1,0 +1,24 @@
+---
+- name: install gradle v{{ gradle_version }}
+  unarchive:
+    src: "https://services.gradle.org/distributions/gradle-{{ gradle_version }}-bin.zip"
+    dest: /usr/share/
+    remote_src: true
+
+- name: create symbolic link
+  file:
+    src: "/usr/share/gradle-{{ gradle_version }}"
+    dest: "/usr/share/gradle"
+    state: link
+
+- name: create GRADLE_HOME environment variable
+  lineinfile:
+    path: /home/vagrant/.bashrc
+    line: "export GRADLE_HOME=/usr/share/gradle"
+    state: present
+
+- name: add gradle to the PATH environment variable
+  lineinfile:
+    path: /home/vagrant/.bashrc
+    line: "export PATH=$PATH:$GRADLE_HOME/bin"
+    state: present
