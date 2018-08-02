@@ -11,3 +11,4 @@
     - terraform
     - awscli
     - gradle
+    - nodejs
