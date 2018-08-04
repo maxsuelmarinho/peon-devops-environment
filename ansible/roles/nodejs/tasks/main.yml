@@ -13,12 +13,14 @@
 
 - name: create NODEJS_HOME environment variable
   lineinfile:
-    path: /home/vagrant/.bashrc
+    path: "{{ item }}/.bashrc"
     line: "export NODEJS_HOME=/usr/share/nodejs"
     state: present
+  with_items: "{{ users_home }}"
 
 - name: add nodejs to the PATH environment variable
   lineinfile:
-    path: /home/vagrant/.bashrc
+    path: "{{ item }}/.bashrc"
     line: "export PATH=$PATH:$NODEJS_HOME/bin"
     state: present
+  with_items: "{{ users_home }}"
