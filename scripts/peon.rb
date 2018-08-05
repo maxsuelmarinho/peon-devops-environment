@@ -1,6 +1,9 @@
 class Peon
   def Peon.work(config, settings)
 
+    config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
+    config.ssh.forward_agent = true
+
     config.vm.provider "virtualbox" do |vb|
       required_plugins = %w(vagrant-vbguest vagrant-disksize)
       required_plugins.each do |plugin|
@@ -13,18 +16,17 @@ class Peon
       config.vbguest.auto_update = true
 
       if settings.include? 'instance_settings'
-        instanceSettings = settings["instance_settings"]
-        vb.customize ["modifyvm", :id, "--memory", instanceSettings["memory"] ||= "1024"]
-        vb.customize ["modifyvm", :id, "--cpus", instanceSettings["cpus"] ||= "1"]
-        config.disksize.size = instanceSettings["disk_size"] ||= "20GB"
+        instance_settings = settings["instance_settings"]
+        vb.customize ["modifyvm", :id, "--memory", instance_settings["memory"] ||= "1024"]
+        vb.customize ["modifyvm", :id, "--cpus", instance_settings["cpus"] ||= "1"]
+        config.disksize.size = instance_settings["disk_size"] ||= "20GB"
 
-        privateNetworkIp = "192.168.33.10"
+        private_network_ip = "192.168.33.10"
         if settings.include? "network"
-            networkSettings = instanceSettings["network"]
-            privateNetworkIp = networkSettings["private_network_ip"]
+            network_settings = instance_settings["network"]
+            private_network_ip = network_settings["private_network_ip"]
         end
-        config.vm.network :private_network, ip: privateNetworkIp
-
+        config.vm.network :private_network, ip: private_network_ip
       end
 
       vb.name = "peon-devops"
@@ -47,10 +49,21 @@ class Peon
     if settings.include? 'shared_folders'
       settings["shared_folders"].each do |folder|
         if File.exists? File.expand_path(folder["src"])
-          config.vm.synced_folder folder["src"], folder["dst"], type: folder["type"] ||= nil
+          mount_opts = []
+
+          if (folder["type"] == "nfs")
+              mount_opts = folder["mount_options"] ? folder["mount_options"] : ['actimeo=1', 'nolock']
+          elsif (folder["type"] == "smb")
+              mount_opts = folder["mount_options"] ? folder["mount_options"] : ['vers=3.02', 'mfsymlinks']
+          end
+
+          options = (folder["options"] || {}).merge({ mount_options: mount_opts })
+          options.keys.each{|k| options[k.to_sym] = options.delete(k) }
+
+          config.vm.synced_folder folder["src"], folder["dest"], type: folder["type"] ||= nil, **options
 
           if Vagrant.has_plugin?("vagrant-bindfs")
-              config.bindfs.bind_folder folder["to"], folder["to"]
+              config.bindfs.bind_folder folder["dest"], folder["dest"]
           end
         else
           config.vm.provision "shell" do |s|
@@ -58,6 +71,17 @@ class Peon
           end
         end
       end
+    end
+
+    config.vm.provision "shell" do |s|
+      s.name = "Install Ansible"
+      s.path = "./scripts/ansible-install.sh"
+      s.args = "2.6.1"
+    end
+
+    config.vm.provision "shell" do |s|
+      s.name = "Execute Ansible Playbook"
+      s.inline = "ansible-playbook /vagrant/ansible/playbook.yml -i \"localhost,\" -c local"
     end
 
   end

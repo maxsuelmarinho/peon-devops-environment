@@ -26,19 +26,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.define "peon-devops"
   config.vm.box = "centos/7"
   config.vm.box_check_update = true
-  config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
-  config.ssh.forward_agent = true  
 
-  config.vm.provision "shell" do |s|
-    s.name = "Install Ansible"
-    s.path = "./scripts/ansible-install.sh"
-    s.args = "2.6.1"
-  end
-
-  config.vm.provision "shell" do |s|
-    s.name = "Execute Ansible Playbook"
-    s.inline = "ansible-playbook /vagrant/ansible/playbook.yml -i \"localhost,\" -c local"
-  end
-
-  Peon.work(config, settings)
+  Peon.work(config, settings)  
 end

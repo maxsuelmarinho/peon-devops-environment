@@ -1,26 +1,29 @@
 ---
-- name: install node.js {{ nodejs_version }}
-  unarchive:
-    src: "https://nodejs.org/dist/{{ nodejs_version }}/node-{{ nodejs_version }}-linux-x64.tar.xz"
-    dest: /usr/share/
-    remote_src: true
+- name: install packages
+  yum:
+    name: "{{ packages }}"
+    state: latest
+  vars:
+    packages:
+    - gcc
+    - gcc-c++
+    - make
 
-- name: create symbolic link
-  file:
-    src: "/usr/share/node-{{ nodejs_version }}-linux-x64"
-    dest: "/usr/share/nodejs"
-    state: link
+- name: remove old nodejs and npm
+  yum:
+    name: "{{ packages }}"
+    state: removed
+  vars:
+    packages:
+    - nodejs
+    - npm
 
-- name: create NODEJS_HOME environment variable
-  lineinfile:
-    path: "{{ item }}/.bashrc"
-    line: "export NODEJS_HOME=/usr/share/nodejs"
+- name: add nodesource repositories for node.js
+  yum:
+    name: "https://rpm.nodesource.com/pub_{{ nodejs_version }}/el/{{ ansible_distribution_major_version }}/{{ ansible_architecture }}/nodesource-release-el{{ ansible_distribution_major_version }}-1.noarch.rpm"
     state: present
-  with_items: "{{ users_home }}"
 
-- name: add nodejs to the PATH environment variable
-  lineinfile:
-    path: "{{ item }}/.bashrc"
-    line: "export PATH=$PATH:$NODEJS_HOME/bin"
-    state: present
-  with_items: "{{ users_home }}"
+- name: ensure nodejs is installed
+  yum:
+    name: nodejs
+    state: latest

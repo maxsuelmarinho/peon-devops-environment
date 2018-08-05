@@ -11,5 +11,5 @@ instance_settings:
 
 shared_folders:
   - src: /home/myuser/projects
-    dst: /home/vagrant/projects
+    dest: /home/vagrant/projects
     type: virtualbox

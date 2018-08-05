@@ -1,3 +1,2 @@
 ---
-nodejs_version: "v10.7.0"
-users_home: [ "/root", "/home/vagrant" ]
+nodejs_version: "10.x"
