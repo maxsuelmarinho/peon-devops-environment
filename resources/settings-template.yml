@@ -5,7 +5,7 @@ ssh_private_keys:
 instance_settings:
     cpus: 2
     memory: 2048
-    disk_size: "20GB"
+    disk_size: "40GB"
     network:
       private_network_ip: "192.168.33.10"
 

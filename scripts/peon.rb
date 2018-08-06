@@ -5,7 +5,7 @@ class Peon
     config.ssh.forward_agent = true
 
     config.vm.provider "virtualbox" do |vb|
-      required_plugins = %w(vagrant-vbguest vagrant-disksize)
+      required_plugins = %w(vagrant-vbguest vagrant-disksize vagrant-bindfs)
       required_plugins.each do |plugin|
         unless Vagrant.has_plugin? plugin
           system "vagrant plugin install #{plugin}"
