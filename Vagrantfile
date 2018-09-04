@@ -23,9 +23,5 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     abort "'settings.yml' file not found in #{confDir}."
   end
 
-  config.vm.define "peon-devops"
-  config.vm.box = "centos/7"
-  config.vm.box_check_update = true
-
   Peon.work(config, settings)  
 end

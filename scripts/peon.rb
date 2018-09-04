@@ -1,6 +1,14 @@
 class Peon
   def Peon.work(config, settings)
 
+    scripts_home = File.dirname(__FILE__)
+
+    instance_settings = settings["instance_settings"]
+
+    config.vm.define "peon-devops"
+    config.vm.box = instance_settings["box"]
+    config.vm.box_check_update = true
+
     config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
     config.ssh.forward_agent = true
 
@@ -14,21 +22,18 @@ class Peon
       end
 
       config.vbguest.auto_update = true
+      
+      vb.customize ["modifyvm", :id, "--memory", instance_settings["memory"] ||= "1024"]
+      vb.customize ["modifyvm", :id, "--cpus", instance_settings["cpus"] ||= "1"]
+      config.disksize.size = instance_settings["disk_size"] ||= "20GB"
 
-      if settings.include? 'instance_settings'
-        instance_settings = settings["instance_settings"]
-        vb.customize ["modifyvm", :id, "--memory", instance_settings["memory"] ||= "1024"]
-        vb.customize ["modifyvm", :id, "--cpus", instance_settings["cpus"] ||= "1"]
-        config.disksize.size = instance_settings["disk_size"] ||= "20GB"
-
-        private_network_ip = "192.168.33.10"
-        if settings.include? "network"
-            network_settings = instance_settings["network"]
-            private_network_ip = network_settings["private_network_ip"]
-        end
-        config.vm.network :private_network, ip: private_network_ip
+      private_network_ip = "192.168.33.10"
+      if settings.include? "network"
+          network_settings = instance_settings["network"]
+          private_network_ip = network_settings["private_network_ip"]
       end
-
+      config.vm.network :private_network, ip: private_network_ip
+      
       vb.name = "peon-devops"
       vb.linked_clone = true
       vb.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
@@ -75,7 +80,7 @@ class Peon
 
     config.vm.provision "shell" do |s|
       s.name = "Install Ansible"
-      s.path = "./scripts/ansible-install.sh"
+      s.path = scripts_home + "/ansible-install.sh"
       s.args = "2.6.1"
     end
 
@@ -84,5 +89,15 @@ class Peon
       s.inline = "ansible-playbook /vagrant/ansible/playbook.yml -i \"localhost,\" -c local"
     end
 
+    config.vm.provision "shell" do |s|
+      s.name = "Install Ruby"
+      s.path = scripts_home + "/ruby-install.sh"
+      s.args = "2.5"
+    end
+
+    config.vm.provision "shell" do |s|
+      s.name = "Install Snap"
+      s.path = scripts_home + "/snapd-install.sh"
+    end
   end
 end
