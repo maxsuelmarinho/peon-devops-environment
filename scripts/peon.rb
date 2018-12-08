@@ -12,6 +12,15 @@ class Peon
     config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
     config.ssh.forward_agent = true
 
+    # Prevent problem with vbguest and shared folders
+    config.vm.provision "shell" do |s|
+      s.inline = <<-SHELL
+      sudo yum update -y
+      sudo yum -y install kernel-devel kernel-headers dkms gcc gcc-c++
+      sudo yum -y update kernel
+      SHELL
+    end
+
     config.vm.provider "virtualbox" do |vb|
       required_plugins = %w(vagrant-vbguest vagrant-disksize vagrant-bindfs)
       required_plugins.each do |plugin|
@@ -22,7 +31,7 @@ class Peon
       end
 
       config.vbguest.auto_update = true
-      
+
       vb.customize ["modifyvm", :id, "--memory", instance_settings["memory"] ||= "1024"]
       vb.customize ["modifyvm", :id, "--cpus", instance_settings["cpus"] ||= "1"]
       config.disksize.size = instance_settings["disk_size"] ||= "20GB"
@@ -33,7 +42,7 @@ class Peon
           private_network_ip = network_settings["private_network_ip"]
       end
       config.vm.network :private_network, ip: private_network_ip
-      
+
       vb.name = "peon-devops"
       vb.linked_clone = true
       vb.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
