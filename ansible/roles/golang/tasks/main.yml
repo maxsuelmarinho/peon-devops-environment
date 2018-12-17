@@ -1,0 +1,18 @@
+---
+- name: install golang v{{ golang_version }}
+  unarchive:
+    src: "https://storage.googleapis.com/golang/go{{ golang_version }}.linux-amd64.tar.gz"
+    dest: /usr/local/
+    remote_src: true
+
+- name: create GOROOT environment variable
+  lineinfile:
+    path: /home/vagrant/.bashrc
+    line: "export GOROOT=/usr/local/go"
+    state: present
+
+- name: add Go to the PATH environment variable
+  lineinfile:
+    path: /home/vagrant/.bashrc
+    line: "export PATH=$PATH:$GOROOT/bin"
+    state: present

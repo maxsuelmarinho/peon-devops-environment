@@ -12,3 +12,4 @@
     - awscli
     - gradle
     - nodejs
+    - golang
