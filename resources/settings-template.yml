@@ -14,3 +14,7 @@ shared_folders:
   - src: /home/myuser/projects
     dest: /home/vagrant/projects
     type: virtualbox
+
+git:
+  username: "myuser"
+  email: "myuser@foo.com"

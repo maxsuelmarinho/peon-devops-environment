@@ -15,14 +15,14 @@ class Peon
     # Prevent problem with vbguest and shared folders
     config.vm.provision "shell" do |s|
       s.inline = <<-SHELL
-      sudo yum update -y
-      sudo yum -y install kernel-devel kernel-headers dkms gcc gcc-c++
-      sudo yum -y update kernel
+      sudo yum update -y \
+      && sudo yum -y install kernel-devel kernel-headers dkms gcc gcc-c++ \
+      && sudo yum -y update kernel
       SHELL
     end
 
     config.vm.provider "virtualbox" do |vb|
-      required_plugins = %w(vagrant-vbguest vagrant-disksize vagrant-bindfs)
+      required_plugins = %w(vagrant-vbguest vagrant-disksize)
       required_plugins.each do |plugin|
         unless Vagrant.has_plugin? plugin
           system "vagrant plugin install #{plugin}"
@@ -108,5 +108,16 @@ class Peon
       s.name = "Install Snap"
       s.path = scripts_home + "/snapd-install.sh"
     end
+
+    if settings.include? "git"
+      gitConfig = settings["git"]
+      config.vm.provision "shell" do |s|
+        s.privileged = false
+        s.name = "Git Config"
+        s.path = scriptDir + "/git-config.sh"
+        s.args = [gitConfig["username"], gitConfig["email"]]
+      end
+    end
+    
   end
 end
