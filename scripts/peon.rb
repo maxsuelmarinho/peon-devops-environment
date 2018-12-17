@@ -114,7 +114,7 @@ class Peon
       config.vm.provision "shell" do |s|
         s.privileged = false
         s.name = "Git Config"
-        s.path = scriptDir + "/git-config.sh"
+        s.path = scripts_home + "/git-config.sh"
         s.args = [gitConfig["username"], gitConfig["email"]]
       end
     end
