@@ -14,11 +14,12 @@ if [ "$(ruby -v 2>&1 | awk '/ruby/ {print $2}' | egrep -o '[^\"]{5}')" == "$ruby
   exit 0
 fi
 
-sudo yum install -y gcc-c++ patch readline readline-devel zlib zlib-devel
-sudo yum install -y libyaml-devel libffi-devel openssl-devel make
-sudo yum install -y bzip2 autoconf automake libtool bison curl sqlite-devel
+sudo yum install -y gcc-c++ patch readline readline-devel zlib zlib-devel \
+                    libyaml-devel libffi-devel openssl-devel make \
+                    bzip2 autoconf automake libtool bison curl sqlite-devel
 
-curl -sSL https://rvm.io/mpapis.asc | gpg --import -
+curl -sSL https://rvm.io/mpapis.asc | sudo gpg2 --import -
+curl -sSL https://rvm.io/pkuczynski.asc | sudo gpg2 --import -
 curl -sSL https://get.rvm.io | sudo bash -s stable
 
 usermod -a -G rvm `whoami`
