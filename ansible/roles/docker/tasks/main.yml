@@ -1,6 +1,39 @@
-- name: ensure docker is at the lastest version
+- name: remove old docker versions
   yum:
-    name: docker
+    name: "{{ packages }}"
+    state: removed
+  vars:
+    packages:
+    - docker
+    - docker-client
+    - docker-client-latest
+    - docker-common
+    - docker-latest
+    - docker-latest-logrotate
+    - docker-logrotate
+    - docker-selinux
+    - docker-engine-selinux
+    - docker-engine
+
+- name: install required packages
+  yum:
+    name: "{{ packages }}"
+    state: latest
+  vars:
+    packages:
+    - yum-utils
+    - device-mapper-persistent-data
+    - lvm2
+
+- name: add docker ce stable repository
+  get_url:
+    url: https://download.docker.com/linux/centos/docker-ce.repo
+    dest: /etc/yum.repos.d/docker-ce.repo
+    mode: 0644  
+
+- name: ensure docker ce is at the lastest version
+  yum:
+    name: docker-ce
     state: latest
     update_cache: yes
 
