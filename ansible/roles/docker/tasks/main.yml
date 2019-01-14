@@ -14,6 +14,7 @@
     - docker-selinux
     - docker-engine-selinux
     - docker-engine
+    - docker-ce*
 
 - name: install required packages
   yum:
@@ -29,11 +30,11 @@
   get_url:
     url: https://download.docker.com/linux/centos/docker-ce.repo
     dest: /etc/yum.repos.d/docker-ce.repo
-    mode: 0644  
+    mode: 0644
 
 - name: ensure docker ce is at the lastest version
   yum:
-    name: docker-ce
+    name: "docker-ce-{{ docker_version }}*"
     state: latest
     update_cache: yes
 
