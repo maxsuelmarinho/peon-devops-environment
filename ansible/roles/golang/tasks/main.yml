@@ -22,6 +22,3 @@
     path: /home/vagrant/.bashrc
     line: "export GOBIN=$GOROOT/bin"
     state: present
-
-- name: install dep
-  shell: "curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh"

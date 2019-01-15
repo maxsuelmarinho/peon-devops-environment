@@ -32,7 +32,7 @@
     dest: /etc/yum.repos.d/docker-ce.repo
     mode: 0644
 
-- name: ensure docker ce is at the lastest version
+- name: install docker ce v{{ docker_version }}
   yum:
     name: "docker-ce-{{ docker_version }}*"
     state: latest
