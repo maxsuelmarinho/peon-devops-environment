@@ -14,6 +14,7 @@ class Peon
 
     # Prevent problem with vbguest and shared folders
     config.vm.provision "shell" do |s|
+      s.name = "Try to prevent problem with vbguest and shared folders"
       s.inline = <<-SHELL
       sudo yum update -y \
       && sudo yum -y install kernel-devel kernel-headers dkms gcc gcc-c++ \

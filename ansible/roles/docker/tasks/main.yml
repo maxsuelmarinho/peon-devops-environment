@@ -35,7 +35,7 @@
 - name: install docker ce v{{ docker_version }}
   yum:
     name: "docker-ce-{{ docker_version }}*"
-    state: latest
+    state: present
     update_cache: yes
 
 - name: ensure docker is running
