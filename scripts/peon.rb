@@ -109,6 +109,21 @@ class Peon
       s.path = scripts_home + "/snapd-install.sh"
     end
 
+    config.vm.provision "shell" do |s|
+      s.name = "Install Minikube"
+      s.path = scripts_home + "/minikube-install.sh"
+    end
+
+    config.vm.provision "shell" do |s|
+      s.name = "Install Kubectl"
+      s.path = scripts_home + "/kubectl-install.sh"
+    end
+
+    config.vm.provision "shell" do |s|
+      s.name = "Install NGrok"
+      s.path = scripts_home + "/ngrok-install.sh"
+    end
+
     if settings.include? "git"
       gitConfig = settings["git"]
       config.vm.provision "shell" do |s|
@@ -118,6 +133,6 @@ class Peon
         s.args = [gitConfig["username"], gitConfig["email"]]
       end
     end
-    
+
   end
 end
