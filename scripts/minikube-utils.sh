@@ -15,3 +15,28 @@ unsetMinikube() {
         unset DOCKER_API_VERSION
         echo "Minikube environment variables removed."
 }
+
+configMinikube() {
+
+  server_ips=$1
+  server_names=$2
+
+  minikube delete \
+    && rm -f /etc/kubernetes/kubelet.conf /etc/kubernetes/admin.conf \
+    && rm -rf /root/.kube /root/.minikube \
+    && rm -rf /var/lib/minikube/certs/ \
+    && rm -rf /etc/kubernetes/
+
+  swapoff -a
+  
+  minikube start --vm-driver none --apiserver-ips "$server_ips" --apiserver-names "$server_names"
+  sudo /usr/bin/kubeadm init --config /var/lib/kubeadm.yaml --ignore-preflight-errors=All
+
+  cp -rv /root/.kube /home/vagrant/.kube \
+    && chown -R vagrant /home/vagrant/.kube \
+    && chgrp -R vagrant /home/vagrant/.kube
+
+  cp -rv /root/.minikube /home/vagrant/.minikube \
+    && chown -R vagrant /home/vagrant/.minikube \
+    && chgrp -R vagrant /home/vagrant/.minikube
+}
