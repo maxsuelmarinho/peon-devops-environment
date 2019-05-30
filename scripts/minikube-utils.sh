@@ -40,3 +40,7 @@ configMinikube() {
     && chown -R vagrant /home/vagrant/.minikube \
     && chgrp -R vagrant /home/vagrant/.minikube
 }
+
+dashboard() {
+  kubectl proxy --address='0.0.0.0' --disable-filter=true
+}
