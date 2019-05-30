@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-setMinikube() {
+set_envs() {
         export DOCKER_TLS_VERIFY="1"
         export DOCKER_HOST="tcp://192.168.99.100:2376"
         export DOCKER_CERT_PATH="/home/vagrant/minikube-certs"
@@ -8,7 +8,7 @@ setMinikube() {
         echo "Minikube environment variables configured."
 }
 
-unsetMinikube() {
+unset_envs() {
         unset DOCKER_HOST
         unset DOCKER_CERT_PATH
         unset DOCKER_TLS_VERIFY
@@ -16,7 +16,7 @@ unsetMinikube() {
         echo "Minikube environment variables removed."
 }
 
-configMinikube() {
+bootstrap() {
 
   server_ips=$1
   server_names=$2
@@ -41,6 +41,14 @@ configMinikube() {
     && chgrp -R vagrant /home/vagrant/.minikube
 }
 
-dashboard() {
+proxy() {
   kubectl proxy --address='0.0.0.0' --disable-filter=true
 }
+
+case $1 in
+ bootstrap) bootstrap ;;
+ set-envs ) set_envs  ;;
+ unset-envs ) unset_envs  ;;
+ proxy ) proxy  ;;
+ *) echo "Use: $0 [bootstrap|set-envs|unset-envs|proxy]" ;;
+esac
