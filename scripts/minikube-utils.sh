@@ -32,17 +32,20 @@ bootstrap() {
   minikube start --vm-driver none --apiserver-ips "$server_ips" --apiserver-names "$server_names"
   sudo /usr/bin/kubeadm init --config /var/lib/kubeadm.yaml --ignore-preflight-errors=All
 
-  cp -rv /root/.kube /home/vagrant/.kube \
+  cp -rv /root/.kube /home/vagrant/ \
     && chown -R vagrant /home/vagrant/.kube \
     && chgrp -R vagrant /home/vagrant/.kube
 
-  cp -rv /root/.minikube /home/vagrant/.minikube \
+  cp -rv /root/.minikube /home/vagrant/ \
     && chown -R vagrant /home/vagrant/.minikube \
     && chgrp -R vagrant /home/vagrant/.minikube
+
+  echo "source <(kubectl completion bash)" >> /home/vagrant/.bashrc # add autocomplete permanently to your bash shell.
 }
 
 proxy() {
   kubectl proxy --address='0.0.0.0' --disable-filter=true
+  # http://<url>:8001/api/v1/namespaces/kube-system/services/http:kubernetes-dashboard:/proxy/
 }
 
 case $1 in
