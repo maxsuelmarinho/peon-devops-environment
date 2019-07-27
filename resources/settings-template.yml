@@ -9,6 +9,9 @@ instance_settings:
     disk_size: "40GB"
     network:
       private_network_ip: "192.168.33.10"
+      ports:
+        - send: 8084
+          to: 8084
 
 shared_folders:
   - src: /home/myuser/projects

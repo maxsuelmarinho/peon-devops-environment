@@ -38,11 +38,30 @@ class Peon
       config.disksize.size = instance_settings["disk_size"] ||= "20GB"
 
       private_network_ip = "192.168.33.10"
-      if settings.include? "network"
-          network_settings = instance_settings["network"]
-          private_network_ip = network_settings["private_network_ip"]
-      end
-      config.vm.network :private_network, ip: private_network_ip
+      if instance_settings.include? "network"
+        network_settings = instance_settings["network"]
+        private_network_ip = network_settings["private_network_ip"]          
+        
+        # Standardize Ports Naming Schema
+        if network_settings.include? "ports"
+          network_settings["ports"].each do |port|
+            port["guest"] ||= port["to"]
+            port["host"] ||= port["send"]
+            port["protocol"] ||= "tcp"
+          end
+        else
+          network_settings["ports"] = []
+        end
+
+        config.vm.network :private_network, ip: private_network_ip
+        
+        # Add Custom Ports From Configuration
+        if network_settings.include? "ports"
+          network_settings["ports"].each do |port|
+            config.vm.network "forwarded_port", guest: port["guest"], host: port["host"], protocol: port["protocol"], auto_correct: true
+          end
+        end
+      end      
 
       vb.name = "peon-devops"
       vb.linked_clone = true
