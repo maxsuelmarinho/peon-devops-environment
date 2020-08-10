@@ -1,0 +1,6 @@
+---
+- name: install ngrok v{{ ngrok_version }}
+  unarchive:
+    src: "https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip"
+    dest: /usr/local/bin/
+    remote_src: true

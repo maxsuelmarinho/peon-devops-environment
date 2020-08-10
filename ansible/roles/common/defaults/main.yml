@@ -1,0 +1,18 @@
+---
+packages:
+  Debian:
+  - openjdk-8-jdk
+  RedHat:
+  - java-1.8.0-openjdk
+  - java-1.8.0-openjdk-devel
+common_packages:
+  - wget
+  - unzip
+  - net-tools
+  - sshpass
+  - tree
+  - vim
+  - git
+  - jq
+  - httpie
+

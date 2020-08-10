@@ -1,6 +1,6 @@
 ---
 - name: install python-pip
-  yum:
+  package:
     name: python-pip
     state: present
 - name: "install awscli"

@@ -4,12 +4,17 @@
   become_method: sudo
   gather_facts: true
   roles:
-    - epel-repository
-    - common
-    - docker
-    - docker-compose
-    - terraform
-    - awscli
-    - gradle
-    - nodejs
-    - golang
+    - role: epel-repository
+      when: ansible_facts['distribution'] == 'CentOS'
+    - role: common
+    - role: docker
+    - role: docker-compose
+    - role: terraform
+    - role: awscli
+    - role: gradle
+    - role: nodejs
+    - role: golang
+    - role: dart
+    - role: ngrok
+    - role: minikube
+    - role: kubectl

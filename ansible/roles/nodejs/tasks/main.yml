@@ -1,30 +1,36 @@
 ---
 - name: install packages
-  yum:
-    name: "{{ packages }}"
+  package:
+    name: "{{ packages[ansible_os_family] }}"
     state: latest
   vars:
     packages:
-    - gcc
-    - gcc-c++
-    - make
+      Redhat:
+      - gcc
+      - gcc-c++
+      - make
+      Debian:
+      - gcc
+      - g++
+      - build-essential
 
 - name: remove old nodejs and npm
-  yum:
+  package:
     name: "{{ packages }}"
-    state: removed
+    state: absent
   vars:
     packages:
     - nodejs
     - npm
 
-- name: add nodesource repositories for node.js
-  yum:
-    name: "https://rpm.nodesource.com/pub_{{ nodejs_version }}/el/{{ ansible_distribution_major_version }}/{{ ansible_architecture }}/nodesource-release-el{{ ansible_distribution_major_version }}-1.noarch.rpm"
-    state: present
+- include_tasks: centos.yml
+  when: ansible_facts['distribution'] == 'CentOS'
+
+- include_tasks: ubuntu.yml
+  when: ansible_facts['distribution'] == 'Ubuntu'
 
 - name: ensure nodejs is installed
-  yum:
+  package:
     name: nodejs
     state: latest
 

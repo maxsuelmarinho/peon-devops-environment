@@ -12,16 +12,6 @@ class Peon
     config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
     config.ssh.forward_agent = true
 
-    # Prevent problem with vbguest and shared folders
-    config.vm.provision "shell" do |s|
-      s.name = "Try to prevent problem with vbguest and shared folders"
-      s.inline = <<-SHELL
-      sudo yum update -y \
-      && sudo yum -y install kernel-devel kernel-headers dkms gcc gcc-c++ \
-      && sudo yum -y update kernel
-      SHELL
-    end
-
     config.vm.provider "virtualbox" do |vb|
       required_plugins = %w(vagrant-vbguest vagrant-disksize)
       required_plugins.each do |plugin|
@@ -40,8 +30,8 @@ class Peon
       private_network_ip = "192.168.33.10"
       if instance_settings.include? "network"
         network_settings = instance_settings["network"]
-        private_network_ip = network_settings["private_network_ip"]          
-        
+        private_network_ip = network_settings["private_network_ip"]
+
         # Standardize Ports Naming Schema
         if network_settings.include? "ports"
           network_settings["ports"].each do |port|
@@ -54,14 +44,14 @@ class Peon
         end
 
         config.vm.network :private_network, ip: private_network_ip
-        
+
         # Add Custom Ports From Configuration
         if network_settings.include? "ports"
           network_settings["ports"].each do |port|
             config.vm.network "forwarded_port", guest: port["guest"], host: port["host"], protocol: port["protocol"], auto_correct: true
           end
         end
-      end      
+      end
 
       vb.name = "peon-devops"
       vb.linked_clone = true
@@ -107,42 +97,23 @@ class Peon
       end
     end
 
-    config.vm.provision "shell" do |s|
-      s.name = "Install Ansible"
-      s.path = scripts_home + "/ansible-install.sh"
-      s.args = "2.6.1"
+    config.vm.provision "ansible_local" do |ansible|
+      ansible.limit = "all"
+      ansible.playbook = "ansible/playbook.yml"
+      ansible.config_file = 'ansible/ansible.cfg'
+      ansible.verbose = true # true, "vvv", or "vvvv"
     end
 
-    config.vm.provision "shell" do |s|
-      s.name = "Execute Ansible Playbook"
-      s.inline = "ansible-playbook /vagrant/ansible/playbook.yml -i \"localhost,\" -c local"
-    end
+    #config.vm.provision "shell" do |s|
+    #  s.name = "Install Ruby"
+    #  s.path = scripts_home + "/ruby-install.sh"
+    #  s.args = "2.5"
+    #end
 
-    config.vm.provision "shell" do |s|
-      s.name = "Install Ruby"
-      s.path = scripts_home + "/ruby-install.sh"
-      s.args = "2.5"
-    end
-
-    config.vm.provision "shell" do |s|
-      s.name = "Install Snap"
-      s.path = scripts_home + "/snapd-install.sh"
-    end
-
-    config.vm.provision "shell" do |s|
-      s.name = "Install Minikube"
-      s.path = scripts_home + "/minikube-install.sh"
-    end
-
-    config.vm.provision "shell" do |s|
-      s.name = "Install Kubectl"
-      s.path = scripts_home + "/kubectl-install.sh"
-    end
-
-    config.vm.provision "shell" do |s|
-      s.name = "Install NGrok"
-      s.path = scripts_home + "/ngrok-install.sh"
-    end
+    #config.vm.provision "shell" do |s|
+    #  s.name = "Install Snap"
+    #  s.path = scripts_home + "/snapd-install.sh"
+    #end
 
     if settings.include? "git"
       gitConfig = settings["git"]

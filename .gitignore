@@ -1,2 +1,3 @@
 .vagrant
 /settings.yml
+*.log

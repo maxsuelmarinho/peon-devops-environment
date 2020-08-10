@@ -1,23 +1,15 @@
 ---
 - name: upgrade all packages
-  yum:
+  package:
     name: "*"
     state: latest
 
-- name: install packages
-  yum:
-    name: "{{ packages }}"
+- name: install common packages
+  package:
+    name: "{{ common_packages }}"
     state: latest
-  vars:
-    packages:
-    - wget
-    - unzip
-    - net-tools
-    - sshpass
-    - tree
-    - vim
-    - git
-    - jq
-    - httpie
-    - java-1.8.0-openjdk
-    - java-1.8.0-openjdk-devel
+
+- name: install packages
+  package:
+    name: "{{ packages[ansible_os_family] }}"
+    state: latest
